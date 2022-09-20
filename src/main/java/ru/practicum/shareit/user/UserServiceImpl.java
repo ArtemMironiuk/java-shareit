@@ -68,8 +68,8 @@ public class UserServiceImpl implements UserService {
 
     private void validDuplicate(UserDto userDto) {
         List<User> users = userRepository.findAll();
-        for (User user1 : users) {
-            if (user1.getEmail().contains(userDto.getEmail())) {
+        for (User user : users) {
+            if (user.getEmail().contains(userDto.getEmail())) {
                 throw new ConflictException("пользователь с таким email уже существует");
             }
         }

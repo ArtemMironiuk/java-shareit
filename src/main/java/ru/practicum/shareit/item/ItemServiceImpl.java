@@ -16,6 +16,8 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -74,14 +76,11 @@ public class ItemServiceImpl implements ItemService {
         if (userId == null) {
             throw new ValidationException("нет информации о пользователе, userId = null");
         }
-        List<Item> itemList = itemRepository.findItems();
-        List<ItemDto> resultItems = new ArrayList<>();
-        for (Item item : itemList) {
-            if (userId.equals(item.getOwner().getId())) {
-                resultItems.add(ItemMapper.toItemDto(item));
-            }
-        }
-        return resultItems;
+        return itemRepository.findItems()
+                .stream()
+                .filter(item -> item.getOwner().getId().equals(userId))
+                .map(ItemMapper::toItemDto)
+                .collect(toList());
     }
 
     @Override
