@@ -6,7 +6,6 @@ import ru.practicum.shareit.handler.exception.ConflictException;
 import ru.practicum.shareit.handler.exception.ObjectNotFoundException;
 import ru.practicum.shareit.handler.exception.ValidationException;
 import ru.practicum.shareit.user.model.UserDto;
-import ru.practicum.shareit.user.model.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import javax.validation.Valid;
@@ -35,10 +34,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
-         @Valid User user = UserMapper.toUser(userDto);
-         if (!user.getEmail().contains("@")) {
-             throw new ValidationException("неправильный Email");
-         }
+        @Valid User user = UserMapper.toUser(userDto);
+        if (!user.getEmail().contains("@")) {
+            throw new ValidationException("неправильный Email");
+        }
         validDuplicate(userDto);
         return UserMapper.toUserDto(userRepository.createUser(user));
     }
@@ -75,6 +74,7 @@ public class UserServiceImpl implements UserService {
             }
         }
     }
+
     private void validationId(Long id) {
         if (id <= 0) {
             throw new ObjectNotFoundException("некокектный userId");

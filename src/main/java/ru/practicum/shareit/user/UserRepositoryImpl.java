@@ -34,7 +34,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User updateUser(Long userId, User user) {
-        usersMap.put(userId,user);
+        usersMap.put(userId, user);
         return user;
     }
 

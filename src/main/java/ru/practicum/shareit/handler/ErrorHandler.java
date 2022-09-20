@@ -16,28 +16,28 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleNotFound(final ValidationException e) {
-        log.info("400 {}",e.getMessage());
+        log.info("400 {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleNotFound(final Throwable e) {
-        log.info("400 {}",e.getMessage());
+        log.info("400 {}", e.getMessage(), e);
         return new ErrorResponse(e.getClass().getName());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(final ObjectNotFoundException e) {
-        log.info("404 {}",e.getMessage());
+        log.info("404 {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleNotFound(final ConflictException e) {
-        log.info("409 {}",e.getMessage());
+        log.info("409 {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }
 
