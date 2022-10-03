@@ -10,6 +10,7 @@ import ru.practicum.shareit.user.model.User;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -29,7 +30,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto findUserById(Long userId) {
         validationId(userId);
-        return UserMapper.toUserDto(userRepository.findUserById(userId));
+        Optional <User> user = userRepository.findById(userId);
+        return UserMapper.toUserDto(user.get());
     }
 
     @Override
@@ -39,14 +41,15 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException("неправильный Email");
         }
         validDuplicate(userDto);
-        return UserMapper.toUserDto(userRepository.createUser(user));
+        return UserMapper.toUserDto(userRepository.save(user));
     }
 
     @Override
     public UserDto updateUser(Long userId, UserDto userDto) {
         validationId(userId);
-        User user = userRepository.findUserById(userId);
-        if (user != null) {
+        Optional <User> userOpt = userRepository.findById(userId);
+        User user = userOpt.get();
+//        if (user.get() != null) {
             if (userDto.getName() != null) {
                 user.setName(userDto.getName());
             }
@@ -54,16 +57,17 @@ public class UserServiceImpl implements UserService {
                 validDuplicate(userDto);
                 user.setEmail(userDto.getEmail());
             }
-            return UserMapper.toUserDto(userRepository.updateUser(user.getId(), user));
+            User u = userRepository.save(user);
+            return UserMapper.toUserDto(u);
 
-        }
-        throw new ObjectNotFoundException("нет пользователя с таким id");
+//        }
+//        throw new ObjectNotFoundException("нет пользователя с таким id");
     }
 
     @Override
     public void deleteUser(Long userId) {
         validationId(userId);
-        userRepository.deleteUser(userId);
+        userRepository.deleteById(userId);
     }
 
     private void validDuplicate(UserDto userDto) {
