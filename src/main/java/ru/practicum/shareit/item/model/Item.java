@@ -29,7 +29,6 @@ public class Item {                //вещь
     @Column(name = "description",nullable = false)
     private String description;    //развернутое описание
     @NonNull
-    @NotBlank
     @Column(name = "available",nullable = false)
     private Boolean available;     //статус о том, доступна или нет вещь для аренды
     @ManyToOne

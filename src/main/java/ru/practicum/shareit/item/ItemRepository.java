@@ -32,4 +32,5 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 //     * @return список всех вещей
 //     */
 //    List<Item> findItems();
+    List<Item> findAllByOwnerId(Long userId);
 }

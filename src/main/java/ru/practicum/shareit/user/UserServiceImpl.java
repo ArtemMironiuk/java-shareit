@@ -31,6 +31,9 @@ public class UserServiceImpl implements UserService {
     public UserDto findUserById(Long userId) {
         validationId(userId);
         Optional <User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new ObjectNotFoundException("Нет такого user");
+        }
         return UserMapper.toUserDto(user.get());
     }
 
@@ -40,7 +43,6 @@ public class UserServiceImpl implements UserService {
         if (!user.getEmail().contains("@")) {
             throw new ValidationException("неправильный Email");
         }
-        validDuplicate(userDto);
         return UserMapper.toUserDto(userRepository.save(user));
     }
 
@@ -54,7 +56,6 @@ public class UserServiceImpl implements UserService {
                 user.setName(userDto.getName());
             }
             if (userDto.getEmail() != null) {
-                validDuplicate(userDto);
                 user.setEmail(userDto.getEmail());
             }
             User u = userRepository.save(user);
@@ -68,15 +69,6 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long userId) {
         validationId(userId);
         userRepository.deleteById(userId);
-    }
-
-    private void validDuplicate(UserDto userDto) {
-        List<User> users = userRepository.findAll();
-        for (User user : users) {
-            if (user.getEmail().contains(userDto.getEmail())) {
-                throw new ConflictException("пользователь с таким email уже существует");
-            }
-        }
     }
 
     private void validationId(Long id) {

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.handler.exception.ObjectNotFoundException;
 import ru.practicum.shareit.handler.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.ItemCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoUpdate;
 import ru.practicum.shareit.item.model.Comment;
@@ -31,19 +32,19 @@ public class ItemServiceImpl implements ItemService {
     private ItemRepository itemRepository;
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private CommentRepository commentRepository;
 
     @Override
     public ItemDto createItem(Long userId, ItemDto itemDto) {
         Optional<User> ownerOpt = userRepository.findById(userId);
+        if (ownerOpt.isEmpty()) {
+            throw new ObjectNotFoundException("Пользователь не найден");
+        }
         User owner = ownerOpt.get();
-//        if (owner == null) {
-//            throw new ObjectNotFoundException("Пользователь не найден");
-//        }
         @Valid Item item = ItemMapper.toItem(itemDto, owner);
-        return ItemMapper.toItemDto(itemRepository.save(item));
+        Item item1 = itemRepository.save(item);
+        return ItemMapper.toItemDto(item1);
     }
 
     @Override
@@ -52,9 +53,9 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException("нет информации о пользователе, userId = null");
         }
         Optional <Item> itemInMemory = itemRepository.findById(itemId);
-//        if (itemInMemory == null) {
-//            throw new  ObjectNotFoundException("нет вещи с id = %d", itemId);
-//        }
+        if (itemInMemory.isEmpty()) {
+            throw new  ObjectNotFoundException("нет вещи с id = %d", itemId);
+        }
         Optional <User> ownerOpt = userRepository.findById(userId);
         if (!ownerOpt.get().equals(itemInMemory.get().getOwner())) {
             throw new  ObjectNotFoundException("у пользавателя с id = %d нет вещей", userId);
@@ -77,6 +78,9 @@ public class ItemServiceImpl implements ItemService {
             throw new ObjectNotFoundException("недопустимое значение itemId");
         }
         Optional<Item> itemOpt = itemRepository.findById(itemId);
+        if (itemOpt.isEmpty()) {
+            throw new ObjectNotFoundException("Пользователь не найден");
+        }
         return ItemMapper.toItemDto(itemOpt.get());
     }
 
@@ -85,9 +89,8 @@ public class ItemServiceImpl implements ItemService {
         if (userId == null) {
             throw new ValidationException("нет информации о пользователе, userId = null");
         }
-        return itemRepository.findAll()
+        return itemRepository.findAllByOwnerId(userId)
                 .stream()
-                .filter(item -> item.getOwner().getId().equals(userId))
                 .map(ItemMapper::toItemDto)
                 .collect(toList());
     }
@@ -109,6 +112,19 @@ public class ItemServiceImpl implements ItemService {
             }
         }
         return resultSearch;
+    }
+
+    @Override
+    public ItemCommentDto findItemByIdWithComments(Long userId, Long itemId) {
+        List<Comment> comments = commentRepository.findAllByItemId(itemId);
+        List<CommentDto> commentsDto = new ArrayList<>();
+        for (Comment comment:comments) {
+            User author = userRepository.findById(comment.getAuthorId()).get();
+            commentsDto.add(CommentMapper.toCommentDto(comment, author.getName()));
+        }
+        Item item = itemRepository.findById(itemId).get();
+
+        return ItemMapper.toItemCommentDto(item,commentsDto);
     }
 
     @Override

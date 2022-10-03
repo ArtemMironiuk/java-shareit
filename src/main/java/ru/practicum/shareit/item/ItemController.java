@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.Create;
 import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.ItemCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoUpdate;
 import ru.practicum.shareit.item.model.Comment;
@@ -58,5 +59,12 @@ public class ItemController {
                                @RequestParam String text) {
         log.info("Получен запрос к эндпоинту GET, /items/search?text={}",text);
         return itemService.searchItem(userId, text);
+    }
+
+    @GetMapping("/{itemId}")
+    public ItemCommentDto findItemByIdWithComments(@RequestHeader ("X-Sharer-User-Id") Long userId,
+                                                   @PathVariable Long itemId) {
+        log.info("Получен запрос к эндпоинту GET, /items/{itemId}");
+        return itemService.findItemByIdWithComments(userId, itemId);
     }
 }

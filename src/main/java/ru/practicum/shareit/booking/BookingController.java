@@ -18,7 +18,7 @@ import java.util.List;
 public class BookingController {
 
 
-    private final BookingService bookingService;
+//    private final BookingService bookingService;
     @PostMapping
     public BookingDto createBooking() {
         return null;
