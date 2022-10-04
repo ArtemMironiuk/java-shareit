@@ -48,6 +48,6 @@ public class ItemMapper {
                 );
     }
     public static ItemCommentDto toItemCommentDto(Item item, List<CommentDto> comments) {
-        return new ItemCommentDto(item.getId(), item.getAvailable(), comments);
+        return new ItemCommentDto(item.getId(), item.getName(), item.getAvailable(), item.getDescription(), comments);
     }
 }

@@ -12,6 +12,8 @@ import java.util.List;
 public class ItemCommentDto {
 
     private Long id;
+    private String name;
     private Boolean available;
+    private String description;
     private List<CommentDto> listComments;
 }

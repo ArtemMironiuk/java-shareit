@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.Create;
@@ -11,6 +12,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoUpdate;
 import ru.practicum.shareit.item.model.Comment;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,12 +23,6 @@ public class ItemController {
 
     private final ItemService itemService;
 
-    @PostMapping("/{itemId}/comment")
-    public CommentDto createComment(@RequestHeader ("X-Sharer-User-Id") Long userId,
-                                 @RequestBody CommentDto commentDto,
-                                 @PathVariable Long itemId) {
-        return itemService.createComment(userId, commentDto, itemId);
-    }
     @PostMapping
     public ItemDto createItem(@RequestHeader ("X-Sharer-User-Id") Long userId,
                               @Validated({Create.class}) @RequestBody ItemDto itemDto) {
@@ -42,8 +38,17 @@ public class ItemController {
         return itemService.updateItem(userId, itemDtoUpdate, itemId);
     }
 
+    @PostMapping("/{itemId}/comment")
+    public CommentDto createComment(@RequestHeader ("X-Sharer-User-Id") Long userId,
+                                    @Valid @RequestBody CommentDto commentDto,
+                                    @PathVariable Long itemId) {
+        log.info("Получен запрос к эндпоинту POST, /items/{itemId}/comment");
+        return itemService.createComment(userId, commentDto, itemId);
+    }
+
     @GetMapping("/{itemId}")
-    public ItemDto findItemById(@RequestHeader ("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
+    public ResponseEntity<Object> findItemById(@RequestHeader ("X-Sharer-User-Id") Long userId,
+                                       @PathVariable Long itemId) {
         log.info("Получен запрос к эндпоинту GET, /items/{itemId}");
         return itemService.findItemById(userId, itemId);
     }
@@ -61,10 +66,10 @@ public class ItemController {
         return itemService.searchItem(userId, text);
     }
 
-    @GetMapping("/{itemId}")
-    public ItemCommentDto findItemByIdWithComments(@RequestHeader ("X-Sharer-User-Id") Long userId,
-                                                   @PathVariable Long itemId) {
-        log.info("Получен запрос к эндпоинту GET, /items/{itemId}");
-        return itemService.findItemByIdWithComments(userId, itemId);
-    }
+//    @GetMapping("/{itemId}")
+//    public ItemCommentDto findItemByIdWithComments(@RequestHeader ("X-Sharer-User-Id") Long userId,
+//                                                   @PathVariable Long itemId) {
+//        log.info("Получен запрос к эндпоинту GET, /items/{itemId}");
+//        return itemService.findItemByIdWithComments(userId, itemId);
+//    }
 }

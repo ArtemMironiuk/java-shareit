@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.handler.exception.ObjectNotFoundException;
 import ru.practicum.shareit.handler.exception.ValidationException;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.stream.Collectors.reducing;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -73,7 +75,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto findItemById(Long userId, Long itemId) {
+    public ResponseEntity<Object> findItemById(Long userId, Long itemId) {
         if (itemId == null) {
             throw new ObjectNotFoundException("недопустимое значение itemId");
         }
@@ -81,7 +83,16 @@ public class ItemServiceImpl implements ItemService {
         if (itemOpt.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден");
         }
-        return ItemMapper.toItemDto(itemOpt.get());
+        List<Comment> comments = commentRepository.findAllByItemId(itemId);
+        List<CommentDto> commentsDto = new ArrayList<>();
+        if (!comments.isEmpty()) {
+            for (Comment comment : comments) {
+                User author = userRepository.findById(comment.getAuthorId()).get();
+                commentsDto.add(CommentMapper.toCommentDto(comment, author.getName()));
+            }
+            return ResponseEntity.ok (ItemMapper.toItemCommentDto(itemOpt.get(), commentsDto));
+        }
+        return ResponseEntity.ok(ItemMapper.toItemDto(itemOpt.get()));
     }
 
     @Override
@@ -95,42 +106,45 @@ public class ItemServiceImpl implements ItemService {
                 .collect(toList());
     }
 
-    @Override //ЭТОТ МЕТОД ДОРАБОТАТЬ
+    @Override
     public List<ItemDto> searchItem(Long userId, String text) {
         List<ItemDto> resultSearch = new ArrayList<>();
         if (text.isEmpty()) {
             return resultSearch;
         }
-        List<Item> itemList = itemRepository.findAll();
+        List<Item> itemList = itemRepository.search(text);
         for (Item item : itemList) {
             if (item.getAvailable() == true) {
-                String nameItem = item.getName().toLowerCase();
-                String descriptionItem = item.getDescription().toLowerCase();
-                if (nameItem.contains(text.toLowerCase()) || descriptionItem.contains(text.toLowerCase())) {
                     resultSearch.add(ItemMapper.toItemDto(item));
                 }
             }
-        }
         return resultSearch;
     }
 
-    @Override
-    public ItemCommentDto findItemByIdWithComments(Long userId, Long itemId) {
-        List<Comment> comments = commentRepository.findAllByItemId(itemId);
-        List<CommentDto> commentsDto = new ArrayList<>();
-        for (Comment comment:comments) {
-            User author = userRepository.findById(comment.getAuthorId()).get();
-            commentsDto.add(CommentMapper.toCommentDto(comment, author.getName()));
-        }
-        Item item = itemRepository.findById(itemId).get();
-
-        return ItemMapper.toItemCommentDto(item,commentsDto);
-    }
+//    @Override
+//    public ItemCommentDto findItemByIdWithComments(Long userId, Long itemId) {
+//        List<Comment> comments = commentRepository.findAllByItemId(itemId);
+//        List<CommentDto> commentsDto = new ArrayList<>();
+//        for (Comment comment:comments) {
+//            User author = userRepository.findById(comment.getAuthorId()).get();
+//            commentsDto.add(CommentMapper.toCommentDto(comment, author.getName()));
+//        }
+//        Item item = itemRepository.findById(itemId).get();
+//
+//        return ItemMapper.toItemCommentDto(item,commentsDto);
+//    }
 
     @Override
     public CommentDto createComment(Long userId, CommentDto commentDto, Long itemId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new ValidationException("User не зарегистрирован");
+        }
+        Optional<Item> item = itemRepository.findById(itemId);
+        if (item.isEmpty()) {
+            throw new ObjectNotFoundException("Item отсутствует");
+        }
         Comment comment = new Comment(commentDto.getId(),commentDto.getText(), itemId, userId, LocalDateTime.now());
-        commentRepository.save(comment);
-        return null;
+        return CommentMapper.toCommentDto(commentRepository.save(comment),user.get().getName());
     }
 }
