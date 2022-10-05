@@ -6,10 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.Create;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemCommentDto;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemDtoUpdate;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 
 import javax.validation.Valid;
@@ -47,8 +44,8 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<Object> findItemById(@RequestHeader ("X-Sharer-User-Id") Long userId,
-                                       @PathVariable Long itemId) {
+    public ItemInfoDto findItemById(@RequestHeader ("X-Sharer-User-Id") Long userId,
+                                    @PathVariable Long itemId) {
         log.info("Получен запрос к эндпоинту GET, /items/{itemId}");
         return itemService.findItemById(userId, itemId);
     }

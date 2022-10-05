@@ -5,12 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.handler.exception.ObjectNotFoundException;
 import ru.practicum.shareit.handler.exception.ValidationException;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemCommentDto;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemDtoUpdate;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
@@ -36,6 +35,8 @@ public class ItemServiceImpl implements ItemService {
     private UserRepository userRepository;
     @Autowired
     private CommentRepository commentRepository;
+    @Autowired
+    private BookingRepository bookingRepository;
 
     @Override
     public ItemDto createItem(Long userId, ItemDto itemDto) {
@@ -75,7 +76,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ResponseEntity<Object> findItemById(Long userId, Long itemId) {
+    public ItemInfoDto findItemById(Long userId, Long itemId) {
         if (itemId == null) {
             throw new ObjectNotFoundException("недопустимое значение itemId");
         }
@@ -83,16 +84,23 @@ public class ItemServiceImpl implements ItemService {
         if (itemOpt.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден");
         }
-        List<Comment> comments = commentRepository.findAllByItemId(itemId);
-        List<CommentDto> commentsDto = new ArrayList<>();
-        if (!comments.isEmpty()) {
-            for (Comment comment : comments) {
-                User author = userRepository.findById(comment.getAuthorId()).get();
-                commentsDto.add(CommentMapper.toCommentDto(comment, author.getName()));
-            }
-            return ResponseEntity.ok (ItemMapper.toItemCommentDto(itemOpt.get(), commentsDto));
+        List<Booking> bookings = bookingRepository.findByItemIdOrderByStartDesc(itemId);
+        if (!userId.equals(itemOpt.get().getOwner().getId())) {
+            return ItemMapper.toItemInfoDto(itemOpt.get(),null,null);
         }
-        return ResponseEntity.ok(ItemMapper.toItemDto(itemOpt.get()));
+        if (bookings.isEmpty()) {
+            return ItemMapper.toItemInfoDto(itemOpt.get(),null,null);
+        }
+//        List<Comment> comments = commentRepository.findAllByItemId(itemId);
+//        List<CommentDto> commentsDto = new ArrayList<>();
+//        if (!comments.isEmpty()) {
+//            for (Comment comment : comments) {
+//                User author = userRepository.findById(comment.getAuthorId()).get();
+//                commentsDto.add(CommentMapper.toCommentDto(comment, author.getName()));
+//            }
+//            return ResponseEntity.ok (ItemMapper.toItemCommentDto(itemOpt.get(), commentsDto));
+//        }
+        return ItemMapper.toItemInfoDto(itemOpt.get(),bookings.get(0),bookings.get(1));
     }
 
     @Override

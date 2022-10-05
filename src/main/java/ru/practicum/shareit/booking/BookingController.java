@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingDtoInput;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemInfoDto;
 
@@ -22,9 +23,9 @@ public class BookingController {
     private final BookingService bookingService;
     @PostMapping
     public BookingDto createBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                    @RequestBody BookingDto bookingDto) {
+                                    @RequestBody BookingDtoInput bookingDtoInput) {
         log.info("Получен запрос к эндпоинту POST, /bookings");
-        return bookingService. createBooking(userId, bookingDto);
+        return bookingService. createBooking(userId, bookingDtoInput);
     }
 
     @PatchMapping("/{bookingId}")  //?approved={approved}
@@ -45,11 +46,11 @@ public class BookingController {
     public List<BookingDto> getBookingsOfUser(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                     @RequestParam(name= "state", defaultValue = "ALL") String stateParam) {
         log.info("Получен запрос к эндпоинту GET, /bookings?state={}", stateParam);
-        try {
-            StatusBooking status = StatusBooking.valueOf(stateParam);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("safasf");
-        }
+//        try {
+//            StatusBooking status = StatusBooking.valueOf(stateParam);
+//        } catch (IllegalArgumentException e) {
+//            throw new IllegalArgumentException("safasf");
+//        }
 
         return bookingService.getBookingsOfUser(userId, stateParam);
     }

@@ -1,10 +1,7 @@
 package ru.practicum.shareit.item;
 
 import org.springframework.http.ResponseEntity;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemCommentDto;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemDtoUpdate;
+import ru.practicum.shareit.item.dto.*;
 
 import java.util.List;
 
@@ -32,7 +29,7 @@ public interface ItemService {
      * @param itemId идентификатор существующей вещи
      * @return экземпляр вещи в DTO
      */
-    ResponseEntity<Object> findItemById(Long userId, Long itemId);
+    ItemInfoDto findItemById(Long userId, Long itemId);
 
     /**
      * Получение списка вещей, которые добавил определенный пользователь

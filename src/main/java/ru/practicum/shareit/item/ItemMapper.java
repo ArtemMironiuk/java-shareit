@@ -33,18 +33,26 @@ public class ItemMapper {
     }
 
     public static ItemInfoDto toItemInfoDto(Item item, Booking lastBooking, Booking nextBooking) {
+        if (lastBooking == null && nextBooking == null) {
+            return new ItemInfoDto(item.getId(),
+                    item.getName(),
+                    item.getDescription(),
+                    item.getAvailable(),
+                    null,
+                    null);
+        }
         return new ItemInfoDto(item.getId(),
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),
                 new ItemInfoDto.BookingDto(lastBooking.getId(),
-                        lastBooking.getStart(),
-                        lastBooking.getEnd(),
-                        lastBooking.getBookerId()),
+//                        lastBooking.getStart(),
+//                        lastBooking.getEnd(),
+                        lastBooking.getBooker().getId()),
                 new ItemInfoDto.BookingDto(nextBooking.getId(),
-                        nextBooking.getStart(),
-                        nextBooking.getEnd(),
-                        nextBooking.getBookerId())
+//                        nextBooking.getStart(),
+//                        nextBooking.getEnd(),
+                        nextBooking.getBooker().getId())
                 );
     }
     public static ItemCommentDto toItemCommentDto(Item item, List<CommentDto> comments) {

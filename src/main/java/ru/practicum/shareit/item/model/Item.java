@@ -22,17 +22,17 @@ public class Item {                //вещь
     private Long id;               //уникальный идентификатор вещи
     @NonNull
     @NotBlank
-    @Column(name = "item_name",nullable = false)
+    @Column(name = "item_name", nullable = false)
     private String name;           //краткое название
     @NonNull
     @NotBlank
-    @Column(name = "description",nullable = false)
+    @Column(name = "description", nullable = false)
     private String description;    //развернутое описание
     @NonNull
-    @Column(name = "available",nullable = false)
+    @Column(name = "available", nullable = false)
     private Boolean available;     //статус о том, доступна или нет вещь для аренды
     @ManyToOne
-    @JoinColumn(name = "owner_id",nullable = false)
+    @JoinColumn(name = "owner_id", nullable = false)
     private User owner;           //владелец вещи
 //    @Column(name = "request_id")
 //    private Long requestId;          //если вещь была создана по запросу другого пользователя, то в этом поле будет ссылка на запрос
