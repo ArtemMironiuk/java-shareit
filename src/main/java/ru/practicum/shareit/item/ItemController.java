@@ -51,7 +51,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> findItemsOfUser(@RequestHeader ("X-Sharer-User-Id") Long userId) {
+    public List<ItemInfoDto> findItemsOfUser(@RequestHeader ("X-Sharer-User-Id") Long userId) {
         log.info("Получен запрос к эндпоинту GET, /items");
         return itemService.findItemsOfUser(userId);
     }

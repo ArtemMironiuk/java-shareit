@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.dto.BookingDtoOutputItem;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -32,27 +33,24 @@ public class ItemMapper {
                 .build();
     }
 
-    public static ItemInfoDto toItemInfoDto(Item item, Booking lastBooking, Booking nextBooking) {
+    public static ItemInfoDto toItemInfoDto(Item item, BookingDtoOutputItem lastBooking, BookingDtoOutputItem nextBooking, List<CommentDto> commentsDto) {
         if (lastBooking == null && nextBooking == null) {
-            return new ItemInfoDto(item.getId(),
-                    item.getName(),
-                    item.getDescription(),
-                    item.getAvailable(),
-                    null,
-                    null);
+            return ItemInfoDto.builder()
+                    .id(item.getId())
+                    .name(item.getName())
+                    .description(item.getDescription())
+                    .available(item.getAvailable())
+                    .build();
         }
         return new ItemInfoDto(item.getId(),
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),
-                new ItemInfoDto.BookingDto(lastBooking.getId(),
-//                        lastBooking.getStart(),
-//                        lastBooking.getEnd(),
-                        lastBooking.getBooker().getId()),
-                new ItemInfoDto.BookingDto(nextBooking.getId(),
-//                        nextBooking.getStart(),
-//                        nextBooking.getEnd(),
-                        nextBooking.getBooker().getId())
+                new BookingDtoOutputItem(lastBooking.getId(),
+                        lastBooking.getBookerId()),
+                new BookingDtoOutputItem(nextBooking.getId(),
+                        nextBooking.getBookerId()),
+                commentsDto
                 );
     }
     public static ItemCommentDto toItemCommentDto(Item item, List<CommentDto> comments) {

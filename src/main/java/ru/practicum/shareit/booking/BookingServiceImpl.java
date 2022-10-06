@@ -62,6 +62,12 @@ public class BookingServiceImpl implements BookingService {
         }
         Item item = itemOpt.get();
         User user = userOpt.get();
+        List<Booking> bookings = bookingRepository.findByItemIdOrderByStartDesc(item.getId());
+        for (Booking booking : bookings) {
+            if (bookingDtoInput.getStart().isBefore(booking.getEnd())) {
+                throw new ValidationException("Вещь не доступна к бронированию в это время");
+            }
+        }
         Booking booking = BookingMapper.toBooking(bookingDtoInput,user,item,StatusBooking.WAITING);
         return BookingMapper.toBookingDto(bookingRepository.save(booking), item);
     }
