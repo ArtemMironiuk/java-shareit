@@ -50,7 +50,6 @@ public class UserServiceImpl implements UserService {
         validationId(userId);
         Optional<User> userOpt = userRepository.findById(userId);
         User user = userOpt.get();
-//        if (user.get() != null) {
         if (userDto.getName() != null) {
             user.setName(userDto.getName());
         }
