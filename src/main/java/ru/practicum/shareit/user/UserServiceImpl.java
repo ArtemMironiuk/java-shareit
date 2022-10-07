@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.handler.exception.ObjectNotFoundException;
 import ru.practicum.shareit.handler.exception.ValidationException;
-import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.model.UserDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -63,6 +61,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long userId) {
         validationId(userId);
+        userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("Нет такого пользователя!"));
         userRepository.deleteById(userId);
     }
 

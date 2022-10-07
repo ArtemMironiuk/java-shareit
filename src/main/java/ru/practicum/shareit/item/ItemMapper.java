@@ -1,11 +1,7 @@
 package ru.practicum.shareit.item;
 
-import ru.practicum.shareit.booking.dto.BookingDtoOutputItem;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemInfoDto;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.booking.BookingDtoOutputItem;
+import ru.practicum.shareit.user.User;
 
 import java.util.List;
 
@@ -30,44 +26,59 @@ public class ItemMapper {
     }
 
     public static ItemInfoDto toItemInfoDto(Item item, BookingDtoOutputItem lastBooking, BookingDtoOutputItem nextBooking, List<CommentDto> commentsDto) {
-        if (lastBooking == null && nextBooking == null) {
-            return ItemInfoDto.builder()
-                    .id(item.getId())
-                    .name(item.getName())
-                    .description(item.getDescription())
-                    .available(item.getAvailable())
-                    .comments(commentsDto)
-                    .build();
+        ItemInfoDto itemInfo = ItemInfoDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .comments(commentsDto)
+                .build();
+        if (lastBooking != null){
+            itemInfo.setLastBooking(lastBooking);
         }
-        if (lastBooking == null && nextBooking != null) {
-            return ItemInfoDto.builder()
-                    .id(item.getId())
-                    .name(item.getName())
-                    .description(item.getDescription())
-                    .available(item.getAvailable())
-                    .nextBooking(new BookingDtoOutputItem(nextBooking.getId(), nextBooking.getBookerId()))
-                    .comments(commentsDto)
-                    .build();
+        if (nextBooking != null){
+            itemInfo.setNextBooking(nextBooking);
         }
-        if (lastBooking != null && nextBooking == null) {
-            return ItemInfoDto.builder()
-                    .id(item.getId())
-                    .name(item.getName())
-                    .description(item.getDescription())
-                    .available(item.getAvailable())
-                    .lastBooking(new BookingDtoOutputItem(lastBooking.getId(), lastBooking.getBookerId()))
-                    .comments(commentsDto)
-                    .build();
-        }
-        return new ItemInfoDto(item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable(),
-                new BookingDtoOutputItem(lastBooking.getId(),
-                        lastBooking.getBookerId()),
-                new BookingDtoOutputItem(nextBooking.getId(),
-                        nextBooking.getBookerId()),
-                commentsDto
-        );
+        return itemInfo;
+
+//        if (lastBooking == null && nextBooking == null) {
+//            return ItemInfoDto.builder()
+//                    .id(item.getId())
+//                    .name(item.getName())
+//                    .description(item.getDescription())
+//                    .available(item.getAvailable())
+//                    .comments(commentsDto)
+//                    .build();
+//        }
+//        if (lastBooking == null && nextBooking != null) {
+//            return ItemInfoDto.builder()
+//                    .id(item.getId())
+//                    .name(item.getName())
+//                    .description(item.getDescription())
+//                    .available(item.getAvailable())
+//                    .nextBooking(new BookingDtoOutputItem(nextBooking.getId(), nextBooking.getBookerId()))
+//                    .comments(commentsDto)
+//                    .build();
+//        }
+//        if (lastBooking != null && nextBooking == null) {
+//            return ItemInfoDto.builder()
+//                    .id(item.getId())
+//                    .name(item.getName())
+//                    .description(item.getDescription())
+//                    .available(item.getAvailable())
+//                    .lastBooking(new BookingDtoOutputItem(lastBooking.getId(), lastBooking.getBookerId()))
+//                    .comments(commentsDto)
+//                    .build();
+//        }
+//        return new ItemInfoDto(item.getId(),
+//                item.getName(),
+//                item.getDescription(),
+//                item.getAvailable(),
+//                new BookingDtoOutputItem(lastBooking.getId(),
+//                        lastBooking.getBookerId()),
+//                new BookingDtoOutputItem(nextBooking.getId(),
+//                        nextBooking.getBookerId()),
+//                commentsDto
+//        );
     }
 }
