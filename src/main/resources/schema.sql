@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS items (
     available BOOLEAN NOT NULL,
     owner_id BIGINT NOT NULL,
     request_id BIGINT,
-    CONSTRAINT pk_item PRIMARY KEY (id),
+    CONSTRAINT pk_item PRIMARY KEY (item_id),
     CONSTRAINT fk_item_on_owner FOREIGN KEY(owner_id) REFERENCES users(user_id),
     CONSTRAINT fk_item_on_request FOREIGN KEY(request_id) REFERENCES items_requests(id),
     CONSTRAINT uq_owner_item_name UNIQUE(owner_id, item_name)
