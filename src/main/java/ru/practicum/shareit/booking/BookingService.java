@@ -2,7 +2,6 @@ package ru.practicum.shareit.booking;
 
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoInput;
-import ru.practicum.shareit.item.dto.ItemInfoDto;
 
 import java.util.List;
 

@@ -1,11 +1,13 @@
 package ru.practicum.shareit.user.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
 
 @Data
 @AllArgsConstructor
@@ -23,6 +25,6 @@ public class User {
     private String name;  //имя или логин пользователя
     @NotBlank
     @Email
-    @Column(name = "email", nullable = false, unique = true,length = 512)
+    @Column(name = "email", nullable = false, unique = true, length = 512)
     private String email; //адрес электронной почты (два пользователя не моуг иметь одинаковый адрес электронной почты)
 }

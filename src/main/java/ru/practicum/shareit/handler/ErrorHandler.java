@@ -23,14 +23,14 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFound(final ObjectNotFoundException e ) {
+    public ErrorResponse handleNotFound(final ObjectNotFoundException e) {
         log.info("404 {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFound(final IllegalArgumentException e ) {
+    public ErrorResponse handleNotFound(final IllegalArgumentException e) {
         log.info("404 {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }

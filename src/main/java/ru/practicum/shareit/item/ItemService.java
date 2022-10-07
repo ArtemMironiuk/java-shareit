@@ -1,14 +1,17 @@
 package ru.practicum.shareit.item;
 
-import org.springframework.http.ResponseEntity;
-import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoUpdate;
+import ru.practicum.shareit.item.dto.ItemInfoDto;
 
 import java.util.List;
 
 public interface ItemService {
     /**
      * Создание вещи item
-     * @param userId идентификатор пользователя который добавляет вещь
+     *
+     * @param userId  идентификатор пользователя который добавляет вещь
      * @param itemDto экземпляр текущей вещи в DTO
      * @return экземпляр созданной вещи в DTO
      */
@@ -16,15 +19,17 @@ public interface ItemService {
 
     /**
      * Обновление данных уже существующей вещи
-     * @param userId идентификатор пользователя который добавил вещь
+     *
+     * @param userId        идентификатор пользователя который добавил вещь
      * @param itemDtoUpdate экземпляр текущей вещи в DTO
-     * @param itemId идентификатор существующей вещи
+     * @param itemId        идентификатор существующей вещи
      * @return экземпляр обновленной вещи в DTO
      */
     ItemDto updateItem(Long userId, ItemDtoUpdate itemDtoUpdate, Long itemId);
 
     /**
      * Получение вещи по id
+     *
      * @param userId идентификатор пользователя
      * @param itemId идентификатор существующей вещи
      * @return экземпляр вещи в DTO
@@ -33,6 +38,7 @@ public interface ItemService {
 
     /**
      * Получение списка вещей, которые добавил определенный пользователь
+     *
      * @param userId идентификатор пользователя, которому принадлежат вещи
      * @return список вещей пользователя в DTO
      */
@@ -40,14 +46,16 @@ public interface ItemService {
 
     /**
      * Поиск вещей по слову или первым буквам
+     *
      * @param userId идентификатор пользователя
-     * @param text слово или набор букв по которым нужно найти вещь
+     * @param text   слово или набор букв по которым нужно найти вещь
      * @return список найденных вещей
      */
     List<ItemDto> searchItem(Long userId, String text);
 
     /**
      * Создать комментарий
+     *
      * @param userId
      * @param commentDto
      * @param itemId

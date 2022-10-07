@@ -1,16 +1,12 @@
 package ru.practicum.shareit.item;
 
-import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.dto.BookingDtoOutputItem;
 import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemInfoDto;
-import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ItemMapper {
@@ -40,6 +36,27 @@ public class ItemMapper {
                     .name(item.getName())
                     .description(item.getDescription())
                     .available(item.getAvailable())
+                    .comments(commentsDto)
+                    .build();
+        }
+        if (lastBooking == null && nextBooking != null) {
+            return ItemInfoDto.builder()
+                    .id(item.getId())
+                    .name(item.getName())
+                    .description(item.getDescription())
+                    .available(item.getAvailable())
+                    .nextBooking(new BookingDtoOutputItem(nextBooking.getId(), nextBooking.getBookerId()))
+                    .comments(commentsDto)
+                    .build();
+        }
+        if (lastBooking != null && nextBooking == null) {
+            return ItemInfoDto.builder()
+                    .id(item.getId())
+                    .name(item.getName())
+                    .description(item.getDescription())
+                    .available(item.getAvailable())
+                    .lastBooking(new BookingDtoOutputItem(lastBooking.getId(), lastBooking.getBookerId()))
+                    .comments(commentsDto)
                     .build();
         }
         return new ItemInfoDto(item.getId(),
@@ -51,9 +68,6 @@ public class ItemMapper {
                 new BookingDtoOutputItem(nextBooking.getId(),
                         nextBooking.getBookerId()),
                 commentsDto
-                );
-    }
-    public static ItemCommentDto toItemCommentDto(Item item, List<CommentDto> comments) {
-        return new ItemCommentDto(item.getId(), item.getName(), item.getAvailable(), item.getDescription(), comments);
+        );
     }
 }

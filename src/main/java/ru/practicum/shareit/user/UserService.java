@@ -7,12 +7,14 @@ import java.util.List;
 public interface UserService {
     /**
      * Получение списка всез пользователей
+     *
      * @return список пользователей в DTO
      */
     List<UserDto> findAll();
 
     /**
      * Получение существующего пользователя
+     *
      * @param userId идентификатор пользователя
      * @return экземпляр пользователя в DTO
      */
@@ -20,6 +22,7 @@ public interface UserService {
 
     /**
      * Создание пользователя user
+     *
      * @param userDto экземпляр пользователя в DTO
      * @return созданный пользователь в DTO
      */
@@ -27,7 +30,8 @@ public interface UserService {
 
     /**
      * Обновление существующего пользователя
-     * @param userId идентификатор пользователя
+     *
+     * @param userId  идентификатор пользователя
      * @param userDto экземпляр текущего пользователя
      * @return экземпляр обновленного пользователя
      */
@@ -35,6 +39,7 @@ public interface UserService {
 
     /**
      * Удаление пользователя по id
+     *
      * @param userId идентификатор пользователя
      */
     void deleteUser(Long userId);

@@ -20,7 +20,7 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                //уникальный идентификатор бронирования
-    @Column(name = "start_booking",nullable = false)
+    @Column(name = "start_booking", nullable = false)
     private LocalDateTime start;    //дата и время начала бронирования
     @Column(name = "end_booking")
     private LocalDateTime end;      //дата и время конца бронирования
@@ -32,6 +32,6 @@ public class Booking {
     private User booker;            //пользователь, который осуществляет бронирование
     @Enumerated(EnumType.STRING)
     private StatusBooking status;         //статус бронирования(WAITING-новое бронирование, ожидает одобрения,
-                                    //APPROVED-бронирование подтверждено владельцем, REJECTED-бронирование отклонено владельцем,
-                                    //CANCELED-бронирование отменено создателем).
+    //APPROVED-бронирование подтверждено владельцем, REJECTED-бронирование отклонено владельцем,
+    //CANCELED-бронирование отменено создателем).
 }

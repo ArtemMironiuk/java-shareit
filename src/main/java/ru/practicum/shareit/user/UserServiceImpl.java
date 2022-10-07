@@ -2,11 +2,10 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.handler.exception.ConflictException;
 import ru.practicum.shareit.handler.exception.ObjectNotFoundException;
 import ru.practicum.shareit.handler.exception.ValidationException;
-import ru.practicum.shareit.user.model.UserDto;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.model.UserDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -30,7 +29,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto findUserById(Long userId) {
         validationId(userId);
-        Optional <User> user = userRepository.findById(userId);
+        Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new ObjectNotFoundException("Нет такого user");
         }
@@ -49,20 +48,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(Long userId, UserDto userDto) {
         validationId(userId);
-        Optional <User> userOpt = userRepository.findById(userId);
+        Optional<User> userOpt = userRepository.findById(userId);
         User user = userOpt.get();
 //        if (user.get() != null) {
-            if (userDto.getName() != null) {
-                user.setName(userDto.getName());
-            }
-            if (userDto.getEmail() != null) {
-                user.setEmail(userDto.getEmail());
-            }
-            User u = userRepository.save(user);
-            return UserMapper.toUserDto(u);
-
-//        }
-//        throw new ObjectNotFoundException("нет пользователя с таким id");
+        if (userDto.getName() != null) {
+            user.setName(userDto.getName());
+        }
+        if (userDto.getEmail() != null) {
+            user.setEmail(userDto.getEmail());
+        }
+        User u = userRepository.save(user);
+        return UserMapper.toUserDto(u);
     }
 
     @Override
