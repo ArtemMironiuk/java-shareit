@@ -33,6 +33,5 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     private StatusBooking status;         //статус бронирования(WAITING-новое бронирование, ожидает одобрения,
     //APPROVED-бронирование подтверждено владельцем, REJECTED-бронирование отклонено владельцем,
-    
     //CANCELED-бронирование отменено создателем).
 }
