@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.handler.exception.ObjectNotFoundException;
 import ru.practicum.shareit.handler.exception.ValidationException;
-import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -173,7 +173,7 @@ public class BookingServiceImpl implements BookingService {
         if (user.isEmpty()) {
             throw new ObjectNotFoundException("Нет owner c id={}", ownerId);
         }
-        List<Item> items = itemRepository.findAllByOwnerId(ownerId);
+        List<Item> items = itemRepository.findAllByOwnerIdOrderById(ownerId);
         List<BookingDto> resultBooking = new ArrayList<>();
         if (stateParam.equals("ALL")) {
             for (Item item : items) {

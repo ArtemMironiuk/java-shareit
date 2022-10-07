@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "booking", schema = "public")
+@Table(name = "bookings", schema = "public")
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +24,11 @@ public class Booking {
     private LocalDateTime start;    //дата и время начала бронирования
     @Column(name = "end_booking")
     private LocalDateTime end;      //дата и время конца бронирования
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;              //вещь, которую пользователь бронирует
-    @ManyToOne
-    @JoinColumn(name = "booker_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "booker", nullable = false)
     private User booker;            //пользователь, который осуществляет бронирование
     @Enumerated(EnumType.STRING)
     private StatusBooking status;         //статус бронирования(WAITING-новое бронирование, ожидает одобрения,

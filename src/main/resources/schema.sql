@@ -43,11 +43,11 @@ CREATE TABLE IF NOT EXISTS bookings (
     start_booking TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     end_booking TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     item_id BIGINT NOT NULL,
-    booker_id BIGINT NOT NULL,
+    booker BIGINT NOT NULL,
     status VARCHAR (100) NOT NULL,
 
     CONSTRAINT pk_booking PRIMARY KEY (id),
-    CONSTRAINT fk_booking_on_booker FOREIGN KEY(booker_id) REFERENCES users(user_id),
+    CONSTRAINT fk_booking_on_booker FOREIGN KEY(booker) REFERENCES users(user_id),
     CONSTRAINT fk_booking_on_item FOREIGN KEY(item_id) REFERENCES items(item_id)
     );
 

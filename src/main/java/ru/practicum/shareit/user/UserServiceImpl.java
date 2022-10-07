@@ -46,16 +46,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(Long userId, UserDto userDto) {
         validationId(userId);
-        Optional<User> userOpt = userRepository.findById(userId);
-        User user = userOpt.get();
+        User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("Нет такого пользователя!"));
         if (userDto.getName() != null) {
             user.setName(userDto.getName());
         }
         if (userDto.getEmail() != null) {
             user.setEmail(userDto.getEmail());
         }
-        User u = userRepository.save(user);
-        return UserMapper.toUserDto(u);
+        return UserMapper.toUserDto(userRepository.save(user));
     }
 
     @Override

@@ -9,14 +9,13 @@ import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.handler.exception.ObjectNotFoundException;
 import ru.practicum.shareit.handler.exception.ValidationException;
-import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserRepository;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -69,7 +68,6 @@ public class ItemServiceImpl implements ItemService {
             throw new ObjectNotFoundException("недопустимое значение itemId");
         }
         Item item = itemRepository.findById(itemId).orElseThrow(ObjectNotFoundException::new);
-
         List<Booking> bookings = bookingRepository.findByItemIdOrderByStartDesc(itemId);
         List<Comment> comments = commentRepository.findAllByItemId(itemId);
         List<CommentDto> commentsDto = new ArrayList<>();
@@ -96,7 +94,7 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException("нет информации о пользователе, userId = null");
         }
         User user = userRepository.findById(userId).orElseThrow(ObjectNotFoundException::new);
-        List<Item> items = itemRepository.findAllByOwnerId(userId);
+        List<Item> items = itemRepository.findAllByOwnerIdOrderById(userId);
         List<ItemInfoDto> itemsInfoDto = new ArrayList<>();
         for (Item item : items) {
             List<Booking> bookings = bookingRepository.findByItemIdOrderByStartDesc(item.getId());
