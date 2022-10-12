@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.handler.exception.ValidationException;
 
 import java.util.List;
 
@@ -38,14 +39,27 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> getBookingsOfUser(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                              @RequestParam(name = "state", defaultValue = "ALL") String stateParam) {
+                                              @RequestParam(name = "state", required = false,
+                                                      defaultValue = "ALL") String stateParam) {
         log.info("Получен запрос к эндпоинту GET, /bookings?state={}", stateParam);
-        return bookingService.getBookingsOfUser(userId, stateParam);
+        try {
+            StateBooking state = StateBooking.valueOf(stateParam);
+            return bookingService.getBookingsOfUser(userId, state);
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
+        }
     }
 
     @GetMapping("/owner")
     public List<BookingDto> getBookingsAllItems(@RequestHeader("X-Sharer-User-Id") Long ownerId,
-                                                @RequestParam(name = "state", defaultValue = "ALL") String stateParam) {
-        return bookingService.getBookingsAllItems(ownerId, stateParam);
+                                                @RequestParam(name = "state", required = false,
+                                                        defaultValue = "ALL") String stateParam) {
+        log.info("Получен запрос к эндпоинту GET, /bookings/owner?state={}", stateParam);
+        try {
+            StateBooking state = StateBooking.valueOf(stateParam);
+            return bookingService.getBookingsAllItems(ownerId, state);
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
+        }
     }
 }

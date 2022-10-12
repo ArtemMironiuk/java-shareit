@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.handler.exception.ObjectNotFoundException;
 import ru.practicum.shareit.handler.exception.ValidationException;
@@ -20,8 +20,9 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
     @Autowired
@@ -33,6 +34,7 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     private BookingRepository bookingRepository;
 
+    @Transactional
     @Override
     public ItemDto createItem(Long userId, ItemDto itemDto) {
         User owner = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден"));
@@ -40,6 +42,7 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
+    @Transactional
     @Override
     public ItemDto updateItem(Long userId, ItemDtoUpdate itemDtoUpdate, Long itemId) {
         if (userId == null) {
@@ -82,10 +85,7 @@ public class ItemServiceImpl implements ItemService {
         }
         Booking lastBooking = lastBooking(bookings);
         Booking nextBooking = nextBooking(bookings);
-        return ItemMapper.toItemInfoDto(item,
-                BookingMapper.toBookingDtoOutputItem(lastBooking),
-                BookingMapper.toBookingDtoOutputItem(nextBooking),
-                commentsDto);
+        return ItemMapper.toItemInfoDto(item, lastBooking, nextBooking, commentsDto);
     }
 
     @Override
@@ -104,9 +104,7 @@ public class ItemServiceImpl implements ItemService {
                     .stream()
                     .map(CommentMapper::toCommentDto)
                     .collect(toList());
-            itemsInfoDto.add(ItemMapper.toItemInfoDto(item,
-                    BookingMapper.toBookingDtoOutputItem(lastBooking),
-                    BookingMapper.toBookingDtoOutputItem(nextBooking), comments));
+            itemsInfoDto.add(ItemMapper.toItemInfoDto(item, lastBooking, nextBooking, comments));
         }
         return itemsInfoDto;
     }
@@ -126,6 +124,7 @@ public class ItemServiceImpl implements ItemService {
         return resultSearch;
     }
 
+    @Transactional
     @Override
     public CommentDto createComment(Long userId, CommentDto commentDto, Long itemId) {
         User user = userRepository.findById(userId).orElseThrow(ValidationException::new);

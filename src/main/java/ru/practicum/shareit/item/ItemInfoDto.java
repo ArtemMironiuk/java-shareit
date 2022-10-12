@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.booking.BookingDtoOutputItem;
 
 import java.util.List;
 
@@ -20,4 +19,12 @@ public class ItemInfoDto {
     private BookingDtoOutputItem lastBooking;
     private BookingDtoOutputItem nextBooking;
     private List<CommentDto> comments;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BookingDtoOutputItem {
+        private Long id;
+        private Long bookerId;
+    }
 }

@@ -3,9 +3,6 @@ package ru.practicum.shareit.booking;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.booking.StatusBooking;
-import ru.practicum.shareit.item.ItemDto;
-import ru.practicum.shareit.user.UserDto;
 
 import java.time.LocalDateTime;
 
@@ -20,5 +17,22 @@ public class BookingDto {
     private ItemDto item;
     private UserDto booker;
     private StatusBooking status;
-    private String itemName;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ItemDto {
+        private Long id;
+        private String name;
+        private String description;
+        private Boolean available;
+    }
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserDto {
+        private Long id;
+        private String name;
+        private String email;
+    }
 }

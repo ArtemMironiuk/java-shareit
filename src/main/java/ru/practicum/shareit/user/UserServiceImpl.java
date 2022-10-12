@@ -1,7 +1,9 @@
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.handler.exception.ObjectNotFoundException;
 import ru.practicum.shareit.handler.exception.ValidationException;
 
@@ -12,6 +14,8 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 
 @Service
+@Slf4j
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -34,6 +38,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(user.get());
     }
 
+    @Transactional
     @Override
     public UserDto createUser(UserDto userDto) {
         @Valid User user = UserMapper.toUser(userDto);
@@ -43,6 +48,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(userRepository.save(user));
     }
 
+    @Transactional
     @Override
     public UserDto updateUser(Long userId, UserDto userDto) {
         validationId(userId);
@@ -56,6 +62,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(userRepository.save(user));
     }
 
+    @Transactional
     @Override
     public void deleteUser(Long userId) {
         validationId(userId);
