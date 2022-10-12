@@ -22,15 +22,18 @@ public class BookingDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ItemDto {
+
         private Long id;
         private String name;
         private String description;
         private Boolean available;
     }
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserDto {
+
         private Long id;
         private String name;
         private String email;
