@@ -1,19 +1,21 @@
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.handler.exception.ConflictException;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.handler.exception.ObjectNotFoundException;
 import ru.practicum.shareit.handler.exception.ValidationException;
-import ru.practicum.shareit.user.model.UserDto;
-import ru.practicum.shareit.user.model.User;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
 @Service
+@Slf4j
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -29,50 +31,43 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto findUserById(Long userId) {
         validationId(userId);
-        return UserMapper.toUserDto(userRepository.findUserById(userId));
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new ObjectNotFoundException("Нет такого user");
+        }
+        return UserMapper.toUserDto(user.get());
     }
 
+    @Transactional
     @Override
     public UserDto createUser(UserDto userDto) {
         @Valid User user = UserMapper.toUser(userDto);
         if (!user.getEmail().contains("@")) {
             throw new ValidationException("неправильный Email");
         }
-        validDuplicate(userDto);
-        return UserMapper.toUserDto(userRepository.createUser(user));
+        return UserMapper.toUserDto(userRepository.save(user));
     }
 
+    @Transactional
     @Override
     public UserDto updateUser(Long userId, UserDto userDto) {
         validationId(userId);
-        User user = userRepository.findUserById(userId);
-        if (user != null) {
-            if (userDto.getName() != null) {
-                user.setName(userDto.getName());
-            }
-            if (userDto.getEmail() != null) {
-                validDuplicate(userDto);
-                user.setEmail(userDto.getEmail());
-            }
-            return UserMapper.toUserDto(userRepository.updateUser(user.getId(), user));
-
+        User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("Нет такого пользователя!"));
+        if (userDto.getName() != null) {
+            user.setName(userDto.getName());
         }
-        throw new ObjectNotFoundException("нет пользователя с таким id");
+        if (userDto.getEmail() != null) {
+            user.setEmail(userDto.getEmail());
+        }
+        return UserMapper.toUserDto(userRepository.save(user));
     }
 
+    @Transactional
     @Override
     public void deleteUser(Long userId) {
         validationId(userId);
-        userRepository.deleteUser(userId);
-    }
-
-    private void validDuplicate(UserDto userDto) {
-        List<User> users = userRepository.findAll();
-        for (User user : users) {
-            if (user.getEmail().contains(userDto.getEmail())) {
-                throw new ConflictException("пользователь с таким email уже существует");
-            }
-        }
+        userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("Нет такого пользователя!"));
+        userRepository.deleteById(userId);
     }
 
     private void validationId(Long id) {

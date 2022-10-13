@@ -1,34 +1,26 @@
 package ru.practicum.shareit.item;
 
-import ru.practicum.shareit.item.model.Item;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface ItemRepository {
+public interface ItemRepository extends JpaRepository<Item, Long> {
     /**
-     * Создание вещи item
-     * @param item экземпляр текущей вещи
-     * @return экземпляр созданной вещи
+     * Получение списка вещей, которые добавил определенный пользователь
+     * @param userId идентификатор пользователя, которому принадлежат вещи
+     * @return список вещей пользователя в DTO
      */
-    Item createItem(Item item);
+    List<Item> findAllByOwnerIdOrderById(Long userId);
 
     /**
-     * Получение вещи item по id
-     * @param itemId идентификатор вещи
-     * @return экземпляр сущности Item
+     * Поиск вещей по слову или первым буквам
+     * @param text слово или набор букв по которым нужно найти вещь
+     * @return список найденных вещей
      */
-    Item findItemById(Long itemId);
+    @Query(" select i from Item i " +
+            "where upper(i.name) like upper(concat('%', ?1, '%')) " +
+            " or upper(i.description) like upper(concat('%', ?1, '%'))")
+    List<Item> search(String text);
 
-    /**
-     * Обновление данных уже существующей вещи
-     * @param item экземпляр текущей вещи
-     * @return экземпляр обновленной вещи
-     */
-    Item updateItem(Item item);
-
-    /**
-     * Получение списка вещей
-     * @return список всех вещей
-     */
-    List<Item> findItems();
 }
