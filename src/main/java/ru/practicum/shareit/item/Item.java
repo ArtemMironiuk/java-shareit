@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.*;
+import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
@@ -33,6 +34,7 @@ public class Item {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner", nullable = false)
     private User owner;
-//    @Column(name = "request_id")
-//    private Long requestId;          //если вещь была создана по запросу другого пользователя, то в этом поле будет ссылка на запрос
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "request_id")
+    private ItemRequest request;          //если вещь была создана по запросу другого пользователя, то в этом поле будет ссылка на запрос
 }

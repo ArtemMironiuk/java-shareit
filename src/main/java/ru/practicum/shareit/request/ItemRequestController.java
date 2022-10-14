@@ -25,7 +25,7 @@ public class ItemRequestController {
     @GetMapping
     public List<RequestAndResponseDtoOut> findRequestsOfOwner(@RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Получен запрос к эндпоинту GET, /requests");
-        return itemRequestService.findRequestsOfUser(userId);
+        return itemRequestService.findRequestsOfOwner(userId);
     }
 
     @GetMapping("/all")

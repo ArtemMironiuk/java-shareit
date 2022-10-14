@@ -9,6 +9,8 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.handler.exception.ObjectNotFoundException;
 import ru.practicum.shareit.handler.exception.ValidationException;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -33,12 +35,20 @@ public class ItemServiceImpl implements ItemService {
     private CommentRepository commentRepository;
     @Autowired
     private BookingRepository bookingRepository;
+    @Autowired
+    private ItemRequestRepository itemRequestRepository;
 
     @Transactional
     @Override
     public ItemDto createItem(Long userId, ItemDto itemDto) {
-        User owner = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден"));
-        @Valid Item item = ItemMapper.toItem(itemDto, owner);
+        User owner = userRepository.findById(userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден"));
+        ItemRequest request = null;
+        if (itemDto.getRequestId() != null) {
+            request = itemRequestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(()-> new ObjectNotFoundException("Нет запроса с таким id = {}",itemDto.getRequestId()));
+        }
+        @Valid Item item = ItemMapper.toItem(itemDto, owner, request);
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
