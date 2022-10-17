@@ -3,6 +3,8 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
@@ -99,12 +101,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemInfoDto> findItemsOfUser(Long userId) {
+    public List<ItemInfoDto> findItemsOfUser(Long userId, Integer from, Integer size) {
         if (userId == null) {
             throw new ValidationException("нет информации о пользователе, userId = null");
         }
         User user = userRepository.findById(userId).orElseThrow(ObjectNotFoundException::new);
-        List<Item> items = itemRepository.findAllByOwnerIdOrderById(userId);
+        Pageable pageable = PageRequest.of(from/size, size);
+        List<Item> items = itemRepository.findAllByOwnerIdOrderById(userId, pageable);
         List<ItemInfoDto> itemsInfoDto = new ArrayList<>();
         for (Item item : items) {
             List<Booking> bookings = bookingRepository.findByItemIdOrderByStartDesc(item.getId());
@@ -120,12 +123,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItem(Long userId, String text) {
+    public List<ItemDto> searchItem(Long userId, String text, Integer from, Integer size) {
         List<ItemDto> resultSearch = new ArrayList<>();
         if (text.isEmpty()) {
             return resultSearch;
         }
-        List<Item> itemList = itemRepository.search(text);
+        Pageable pageable = PageRequest.of(from/size, size);
+        List<Item> itemList = itemRepository.search(text, pageable);
         for (Item item : itemList) {
             if (item.getAvailable() == true) {
                 resultSearch.add(ItemMapper.toItemDto(item));

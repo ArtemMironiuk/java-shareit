@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.MyPageRequest;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -30,8 +33,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<RequestAndResponseDtoOut> findRequestsOfUser(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                             @RequestParam (name = "from") Integer from,
-                                                             @RequestParam (name = "size") Integer size) {
+                                                             @RequestParam (name = "from", required = false) Integer from,
+                                                             @RequestParam (name = "size", required = false) Integer size) {
         log.info("Получен запрос к эндпоинту GET, /requests/all?from={}&size={}", from, size);
         return itemRequestService.findRequestsOfUser(userId, from, size);
     }

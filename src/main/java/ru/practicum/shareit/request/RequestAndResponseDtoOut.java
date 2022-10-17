@@ -16,7 +16,7 @@ public class RequestAndResponseDtoOut {
     private Long id;
     private String description;
     private LocalDateTime created;
-    private List<ItemDto> response;
+    private List<ItemDto> items;
 
     @Data
     @NoArgsConstructor

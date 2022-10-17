@@ -51,7 +51,7 @@ public class ItemRequestMapper {
                 .id(request.getId())
                 .description(request.getDescription())
                 .created(request.getCreated())
-                .response(itemDtoList)
+                .items(itemDtoList)
                 .build();
     }
 }

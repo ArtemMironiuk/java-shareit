@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -11,7 +12,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
      * @param userId идентификатор пользователя, которому принадлежат вещи
      * @return список вещей пользователя в DTO
      */
-    List<Item> findAllByOwnerIdOrderById(Long userId);
+    List<Item> findAllByOwnerIdOrderById(Long userId, Pageable pageable);
 
     /**
      * Поиск вещей по слову или первым буквам
@@ -21,7 +22,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query(" select i from Item i " +
             "where upper(i.name) like upper(concat('%', ?1, '%')) " +
             " or upper(i.description) like upper(concat('%', ?1, '%'))")
-    List<Item> search(String text);
+    List<Item> search(String text, Pageable pageable);
 
     List<Item> findByRequest_Id(Long requestId);
 

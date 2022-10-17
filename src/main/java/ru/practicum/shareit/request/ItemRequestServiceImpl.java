@@ -58,19 +58,24 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public List<RequestAndResponseDtoOut> findRequestsOfUser(Long userId, Integer from, Integer size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new ObjectNotFoundException("User не зарегистрирован"));
+        List<RequestAndResponseDtoOut> resultRequestAndResponse = new ArrayList<>();
+        if (size == null && from == null) {
+            return resultRequestAndResponse;
+        }
         if (from < 0) {
             throw new ValidationException("from меньше 0");
         }
         if (size<=0) {
-            throw new ValidationException("size меньше 0");
+            throw new ValidationException("size меньше либо равно 0");
         }
         Sort createdDesc = Sort.by(Sort.Direction.DESC, "created");
-        Pageable pageable = PageRequest.of(from, size, createdDesc);
-        List<RequestAndResponseDtoOut> resultRequestAndResponse = new ArrayList<>();
+        Pageable pageable = PageRequest.of(from/size, size, createdDesc);
         Page<ItemRequest> requestList = itemRequestRepository.findAll(pageable);
         for (ItemRequest request : requestList) {
-            List<Item> itemList = itemRepository.findByRequest_Id(request.getId());
-            resultRequestAndResponse.add(ItemRequestMapper.toRequestAndResponseDtoOut(request, itemList));
+            if (!request.getRequester().getId().equals(userId)) {
+                List<Item> itemList = itemRepository.findByRequest_Id(request.getId());
+                resultRequestAndResponse.add(ItemRequestMapper.toRequestAndResponseDtoOut(request, itemList));
+            }
         }
         return resultRequestAndResponse;
     }

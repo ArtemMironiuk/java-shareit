@@ -3,6 +3,8 @@ package ru.practicum.shareit.booking;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -119,15 +121,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingsOfUser(Long userId, StateBooking state) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            throw new ObjectNotFoundException("Нет user c таким id");
-        }
+    public List<BookingDto> getBookingsOfUser(Long userId, StateBooking state, Integer from, Integer size) {
+        validation(userId, from, size);
         Sort startDesc = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of(from/size, size, startDesc);
         switch (state) {
             case ALL:
-                return bookingRepository.findAllByBookerId(userId, startDesc)
+                return bookingRepository.findAllByBookerId(userId, pageable)
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(toList());
@@ -165,15 +165,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingsAllItems(Long ownerId, StateBooking state) {
-        Optional<User> user = userRepository.findById(ownerId);
-        if (user.isEmpty()) {
-            throw new ObjectNotFoundException("Нет owner c id={}", ownerId);
-        }
+    public List<BookingDto> getBookingsAllItems(Long ownerId, StateBooking state, Integer from, Integer size) {
+        validation(ownerId, from, size);
         Sort startDesc = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = PageRequest.of(from/size, size, startDesc);
         switch (state) {
             case ALL:
-                return bookingRepository.findByItem_Owner_Id(ownerId, startDesc)
+                return bookingRepository.findByItem_Owner_Id(ownerId, pageable)
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(toList());
@@ -205,6 +203,19 @@ public class BookingServiceImpl implements BookingService {
                         .collect(toList());
             default:
                 throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
+        }
+    }
+
+    private void validation(Long ownerId, Integer from, Integer size) {
+        Optional<User> user = userRepository.findById(ownerId);
+        if (user.isEmpty()) {
+            throw new ObjectNotFoundException("Нет owner c id={}", ownerId);
+        }
+        if (from < 0) {
+            throw new ValidationException("from меньше 0");
+        }
+        if (size <= 0) {
+            throw new ValidationException("size меньше либо равно 0");
         }
     }
 }

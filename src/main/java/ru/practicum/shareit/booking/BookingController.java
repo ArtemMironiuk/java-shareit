@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.handler.exception.ValidationException;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Slf4j
@@ -40,11 +42,13 @@ public class BookingController {
     @GetMapping
     public List<BookingDto> getBookingsOfUser(@RequestHeader("X-Sharer-User-Id") Long userId,
                                               @RequestParam(name = "state", required = false,
-                                                      defaultValue = "ALL") String stateParam) {
+                                                      defaultValue = "ALL") String stateParam,
+                                              @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                              @RequestParam(name = "size", defaultValue = "20") Integer size) {
         log.info("Получен запрос к эндпоинту GET, /bookings?state={}", stateParam);
         try {
             StateBooking state = StateBooking.valueOf(stateParam);
-            return bookingService.getBookingsOfUser(userId, state);
+            return bookingService.getBookingsOfUser(userId, state, from, size);
         } catch (IllegalArgumentException e) {
             throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
         }
@@ -53,11 +57,13 @@ public class BookingController {
     @GetMapping("/owner")
     public List<BookingDto> getBookingsAllItems(@RequestHeader("X-Sharer-User-Id") Long ownerId,
                                                 @RequestParam(name = "state", required = false,
-                                                        defaultValue = "ALL") String stateParam) {
+                                                        defaultValue = "ALL") String stateParam,
+                                                @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                @RequestParam(name = "size", defaultValue = "20") Integer size) {
         log.info("Получен запрос к эндпоинту GET, /bookings/owner?state={}", stateParam);
         try {
             StateBooking state = StateBooking.valueOf(stateParam);
-            return bookingService.getBookingsAllItems(ownerId, state);
+            return bookingService.getBookingsAllItems(ownerId, state, from, size);
         } catch (IllegalArgumentException e) {
             throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
         }
