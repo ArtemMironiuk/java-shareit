@@ -26,11 +26,11 @@ import java.util.List;
 public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Autowired
-    private ItemRequestRepository itemRequestRepository;
+    ItemRequestRepository itemRequestRepository;
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
     @Autowired
-    private ItemRepository itemRepository;
+    ItemRepository itemRepository;
 
     @Override
     public ItemRequestDtoOutput createRequest(Long userId, ItemRequestDtoInput requestDto) {

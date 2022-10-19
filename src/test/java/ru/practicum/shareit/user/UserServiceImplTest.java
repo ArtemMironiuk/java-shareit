@@ -75,9 +75,6 @@ public class UserServiceImplTest {
 
     @Test
     void testFindUserById404OfUser() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
-                .thenThrow(new ObjectNotFoundException("Нет такого user"));
         final ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class,
                 () -> userServiceImpl.findUserById(2L));
 
@@ -128,11 +125,6 @@ public class UserServiceImplTest {
     @Test
     void testUpdateUser404() {
         UserDto userDto = new UserDto(2L, "user_21", "user21@mail");
-        User user = new User(userDto.getId(), userDto.getName(), userDto.getEmail());
-        when(userRepository.save(any(User.class)))
-                .thenReturn(user1);
-        when(userRepository.findById(2L))
-                .thenThrow(new ObjectNotFoundException("Нет такого пользователя!"));
         final ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class,
                 () -> userServiceImpl.updateUser(2L, userDto));
 

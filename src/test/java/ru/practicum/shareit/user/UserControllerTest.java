@@ -78,7 +78,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.id", is(userDto1.getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(userDto1.getName())))
                 .andExpect(jsonPath("$.email", is(userDto1.getEmail())));
-
     }
 
     @Test
