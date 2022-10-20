@@ -3,10 +3,7 @@ package ru.practicum.shareit.request;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -18,16 +15,12 @@ import ru.practicum.shareit.handler.exception.ValidationException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserDto;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -54,7 +47,6 @@ public class ItemRequestServiceImplTest {
     private RequestAndResponseDtoOut requestAndResponseDtoOut;
 
     private RequestAndResponseDtoOut.ItemDto itemDto;
-
 
     private User user;
     private User user2;
@@ -92,8 +84,8 @@ public class ItemRequestServiceImplTest {
         assertEquals(itemRequest.getDescription(), itemRequestDtoOutput1.getDescription());
         assertEquals(itemRequest.getCreated().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 itemRequestDtoOutput1.getCreated().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        assertEquals(user.getId(),itemRequest.getRequester().getId());
-        assertEquals(user.getName(),itemRequest.getRequester().getName());
+        assertEquals(user.getId(), itemRequest.getRequester().getId());
+        assertEquals(user.getName(), itemRequest.getRequester().getName());
     }
 
     @Test
@@ -152,14 +144,14 @@ public class ItemRequestServiceImplTest {
                 itemRequest);
         Pageable pageable = PageRequest.ofSize(20);
         List<ItemRequest> itemRequests = List.of(itemRequest);
-        Page<ItemRequest> items = new PageImpl<>(itemRequests,pageable,itemRequests.size());
+        Page<ItemRequest> items = new PageImpl<>(itemRequests, pageable, itemRequests.size());
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
         when(itemRepository.findByRequest_Id(anyLong()))
                 .thenReturn(List.of(item));
         when(requestRepository.findAll(any(Pageable.class)))
                 .thenReturn(items);
-        List<RequestAndResponseDtoOut> requestAndResponsesDtoOut = itemRequestService.findRequestsOfUser(user.getId(),0, 20);
+        List<RequestAndResponseDtoOut> requestAndResponsesDtoOut = itemRequestService.findRequestsOfUser(user.getId(), 0, 20);
         assertNotNull(requestAndResponsesDtoOut);
         assertEquals(1, requestAndResponsesDtoOut.size());
     }
@@ -168,7 +160,7 @@ public class ItemRequestServiceImplTest {
     void testFindRequestsOfUserEmpty() {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
-        List<RequestAndResponseDtoOut> requestAndResponsesDtoOut = itemRequestService.findRequestsOfUser(user.getId(),null, null);
+        List<RequestAndResponseDtoOut> requestAndResponsesDtoOut = itemRequestService.findRequestsOfUser(user.getId(), null, null);
         assertNotNull(requestAndResponsesDtoOut);
         assertEquals(0, requestAndResponsesDtoOut.size());
     }
@@ -178,7 +170,7 @@ public class ItemRequestServiceImplTest {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
         final ValidationException exception = assertThrows(ValidationException.class,
-                () -> itemRequestService.findRequestsOfUser(user.getId(),-1, 20));
+                () -> itemRequestService.findRequestsOfUser(user.getId(), -1, 20));
         assertEquals("from меньше 0", exception.getMessage());
     }
 
@@ -187,7 +179,7 @@ public class ItemRequestServiceImplTest {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
         final ValidationException exception = assertThrows(ValidationException.class,
-                () -> itemRequestService.findRequestsOfUser(user.getId(),0, 0));
+                () -> itemRequestService.findRequestsOfUser(user.getId(), 0, 0));
         assertEquals("size меньше либо равно 0", exception.getMessage());
     }
 

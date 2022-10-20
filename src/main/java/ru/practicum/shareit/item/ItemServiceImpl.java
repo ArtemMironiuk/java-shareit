@@ -30,15 +30,15 @@ import static java.util.stream.Collectors.toList;
 public class ItemServiceImpl implements ItemService {
 
     @Autowired
-    private ItemRepository itemRepository;
+    ItemRepository itemRepository;
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
     @Autowired
-    private CommentRepository commentRepository;
+    CommentRepository commentRepository;
     @Autowired
-    private BookingRepository bookingRepository;
+    BookingRepository bookingRepository;
     @Autowired
-    private ItemRequestRepository itemRequestRepository;
+    ItemRequestRepository itemRequestRepository;
 
     @Transactional
     @Override
@@ -61,9 +61,9 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException("нет информации о пользователе, userId = null");
         }
         User owner = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден"));
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ObjectNotFoundException("нет вещи с id = %d", itemId));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ObjectNotFoundException("нет вещи с таким id"));
         if (!owner.getId().equals(item.getOwner().getId())) {
-            throw new ObjectNotFoundException("у пользавателя с id = %d нет вещей", userId);
+            throw new ObjectNotFoundException("у пользавателя с таким id нет вещей");
         }
         if (itemDtoUpdate.getAvailable() != null) {
             item.setAvailable(itemDtoUpdate.getAvailable());

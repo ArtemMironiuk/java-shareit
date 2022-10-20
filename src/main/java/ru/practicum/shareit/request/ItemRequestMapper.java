@@ -38,15 +38,6 @@ public class ItemRequestMapper {
                         item.getRequest().getId(),
                         item.getOwner().getId()))
                 .collect(toList());
-//        List<RequestAndResponseDtoOut.ItemDto> itemDtoList = new ArrayList<>();
-//        for (Item item : itemList) {
-//            itemDtoList.add(new RequestAndResponseDtoOut.ItemDto(item.getId(),
-//                    item.getName(),
-//                    item.getDescription(),
-//                    item.getAvailable(),
-//                    item.getRequest().getId(),
-//                    item.getOwner().getId()));
-//        }
         return RequestAndResponseDtoOut.builder()
                 .id(request.getId())
                 .description(request.getDescription())
