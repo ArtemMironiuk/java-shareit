@@ -28,31 +28,28 @@ import static java.util.stream.Collectors.toList;
 public class BookingServiceImpl implements BookingService {
 
     @Autowired
-    private ItemRepository itemRepository;
+    protected ItemRepository itemRepository;
     @Autowired
-    private UserRepository userRepository;
+    protected UserRepository userRepository;
     @Autowired
-    private BookingRepository bookingRepository;
+    protected BookingRepository bookingRepository;
 
     @Transactional
     @Override
     public BookingDto createBooking(Long userId, BookingDtoInput bookingDtoInput) {
         Optional<Item> itemOpt = itemRepository.findById(bookingDtoInput.getItemId());
         if (itemOpt.isEmpty()) {
-            throw new ObjectNotFoundException("Item c id = {} не существует", bookingDtoInput.getItemId());
+            throw new ObjectNotFoundException("Item c таким id не существует");
         }
         if (itemOpt.get().getAvailable().equals(false)) {
             throw new ValidationException("Item не доступна для бронирования");
         }
         Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isEmpty()) {
-            throw new ObjectNotFoundException("User с id = {} не зарегистрирован", userId);
+            throw new ObjectNotFoundException("User с таким id не зарегистрирован");
         }
         if (bookingDtoInput.getEnd().isBefore(bookingDtoInput.getStart())) {
             throw new ValidationException("Конец бронирования не может быть в прошлом");
-        }
-        if (bookingDtoInput.getStart().isAfter(bookingDtoInput.getEnd())) {
-            throw new ValidationException(("Время начала бронирования не может быть после времени конца бронирования"));
         }
         if (bookingDtoInput.getStart().isBefore(LocalDateTime.now())) {
             throw new ValidationException("Время начала не может быть в прошлом");
@@ -75,13 +72,10 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     @Override
     public BookingDto setApproved(Long userId, Long bookingId, String approved) {
-        Optional<Booking> bookingOpt = bookingRepository.findById(bookingId);
-        Booking booking = bookingOpt.get();
-        if (bookingOpt.isEmpty()) {
-            throw new ObjectNotFoundException("Booking c id = {} нет в базе", bookingId);
-        }
-        Optional<Item> itemOpt = itemRepository.findById(booking.getItem().getId());
-        Item item = itemOpt.get();
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(()-> new ObjectNotFoundException("Booking c таким id нет в базе"));
+        Item item = itemRepository.findById(booking.getItem().getId())
+                .orElseThrow(()-> new ObjectNotFoundException("Item c таким id нет в базе"));
         if (!userId.equals(item.getOwner().getId())) {
             throw new ObjectNotFoundException("У Item другой владелец");
         }
