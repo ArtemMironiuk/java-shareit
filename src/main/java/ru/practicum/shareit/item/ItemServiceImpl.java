@@ -48,7 +48,7 @@ public class ItemServiceImpl implements ItemService {
         ItemRequest request = null;
         if (itemDto.getRequestId() != null) {
             request = itemRequestRepository.findById(itemDto.getRequestId())
-                    .orElseThrow(()-> new ObjectNotFoundException("Нет запроса с таким id = {}",itemDto.getRequestId()));
+                    .orElseThrow(() -> new ObjectNotFoundException("Нет запроса с таким id = {}", itemDto.getRequestId()));
         }
         @Valid Item item = ItemMapper.toItem(itemDto, owner, request);
         return ItemMapper.toItemDto(itemRepository.save(item));
@@ -106,7 +106,7 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException("нет информации о пользователе, userId = null");
         }
         User user = userRepository.findById(userId).orElseThrow(ObjectNotFoundException::new);
-        Pageable pageable = PageRequest.of(from/size, size);
+        Pageable pageable = PageRequest.of(from / size, size);
         List<Item> items = itemRepository.findAllByOwnerIdOrderById(userId, pageable);
         List<ItemInfoDto> itemsInfoDto = new ArrayList<>();
         for (Item item : items) {
@@ -128,7 +128,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.isEmpty()) {
             return resultSearch;
         }
-        Pageable pageable = PageRequest.of(from/size, size);
+        Pageable pageable = PageRequest.of(from / size, size);
         List<Item> itemList = itemRepository.search(text, pageable);
         for (Item item : itemList) {
             if (item.getAvailable() == true) {

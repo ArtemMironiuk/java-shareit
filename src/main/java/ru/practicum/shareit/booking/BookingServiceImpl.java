@@ -73,9 +73,9 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto setApproved(Long userId, Long bookingId, String approved) {
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(()-> new ObjectNotFoundException("Booking c таким id нет в базе"));
+                .orElseThrow(() -> new ObjectNotFoundException("Booking c таким id нет в базе"));
         Item item = itemRepository.findById(booking.getItem().getId())
-                .orElseThrow(()-> new ObjectNotFoundException("Item c таким id нет в базе"));
+                .orElseThrow(() -> new ObjectNotFoundException("Item c таким id нет в базе"));
         if (!userId.equals(item.getOwner().getId())) {
             throw new ObjectNotFoundException("У Item другой владелец");
         }
@@ -118,7 +118,7 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDto> getBookingsOfUser(Long userId, StateBooking state, Integer from, Integer size) {
         validation(userId, from, size);
         Sort startDesc = Sort.by(Sort.Direction.DESC, "start");
-        Pageable pageable = PageRequest.of(from/size, size, startDesc);
+        Pageable pageable = PageRequest.of(from / size, size, startDesc);
         switch (state) {
             case ALL:
                 return bookingRepository.findAllByBookerId(userId, pageable)
@@ -162,7 +162,7 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDto> getBookingsAllItems(Long ownerId, StateBooking state, Integer from, Integer size) {
         validation(ownerId, from, size);
         Sort startDesc = Sort.by(Sort.Direction.DESC, "start");
-        Pageable pageable = PageRequest.of(from/size, size, startDesc);
+        Pageable pageable = PageRequest.of(from / size, size, startDesc);
         switch (state) {
             case ALL:
                 return bookingRepository.findByItem_Owner_Id(ownerId, pageable)

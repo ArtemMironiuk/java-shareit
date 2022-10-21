@@ -35,7 +35,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public ItemRequestDtoOutput createRequest(Long userId, ItemRequestDtoInput requestDto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new ObjectNotFoundException("User не зарегистрирован"));
+                .orElseThrow(() -> new ObjectNotFoundException("User не зарегистрирован"));
         ItemRequest itemRequest = ItemRequestMapper.toItemRequest(requestDto, user);
         return ItemRequestMapper.toItemRequestDtoOutput(itemRequestRepository.save(itemRequest));
     }
@@ -43,7 +43,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<RequestAndResponseDtoOut> findRequestsOfOwner(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new ObjectNotFoundException("User не зарегистрирован"));
+                .orElseThrow(() -> new ObjectNotFoundException("User не зарегистрирован"));
         Sort createdDesc = Sort.by(Sort.Direction.DESC, "created");
         List<RequestAndResponseDtoOut> resultRequestAndResponse = new ArrayList<>();
         List<ItemRequest> requestList = itemRequestRepository.findByRequesterId(userId, createdDesc);
@@ -57,7 +57,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<RequestAndResponseDtoOut> findRequestsOfUser(Long userId, Integer from, Integer size) {
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new ObjectNotFoundException("User не зарегистрирован"));
+                .orElseThrow(() -> new ObjectNotFoundException("User не зарегистрирован"));
         List<RequestAndResponseDtoOut> resultRequestAndResponse = new ArrayList<>();
         if (size == null && from == null) {
             return resultRequestAndResponse;
@@ -65,11 +65,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (from < 0) {
             throw new ValidationException("from меньше 0");
         }
-        if (size<=0) {
+        if (size <= 0) {
             throw new ValidationException("size меньше либо равно 0");
         }
         Sort createdDesc = Sort.by(Sort.Direction.DESC, "created");
-        Pageable pageable = PageRequest.of(from/size, size, createdDesc);
+        Pageable pageable = PageRequest.of(from / size, size, createdDesc);
         Page<ItemRequest> requestList = itemRequestRepository.findAll(pageable);
         for (ItemRequest request : requestList) {
             if (!request.getRequester().getId().equals(userId)) {
@@ -83,9 +83,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public RequestAndResponseDtoOut findRequest(Long userId, Long requestId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new ObjectNotFoundException("User не зарегистрирован"));
+                .orElseThrow(() -> new ObjectNotFoundException("User не зарегистрирован"));
         ItemRequest itemRequest = itemRequestRepository.findById(requestId)
-                .orElseThrow(()->new ObjectNotFoundException("Ничего не найдено по requestId = {}", requestId));
+                .orElseThrow(() -> new ObjectNotFoundException("Ничего не найдено по requestId = {}", requestId));
         List<Item> itemList = itemRepository.findByRequest_Id(itemRequest.getId());
         return ItemRequestMapper.toRequestAndResponseDtoOut(itemRequest, itemList);
     }

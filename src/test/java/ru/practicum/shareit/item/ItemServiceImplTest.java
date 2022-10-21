@@ -73,7 +73,7 @@ public class ItemServiceImplTest {
         itemService = new ItemServiceImpl();
         itemService.itemRepository = itemRepository;
         itemService.userRepository = userRepository;
-        itemService.commentRepository =commentRepository;
+        itemService.commentRepository = commentRepository;
         itemService.bookingRepository = bookingRepository;
         itemService.itemRequestRepository = itemRequestRepository;
 
@@ -86,7 +86,7 @@ public class ItemServiceImplTest {
         item = ItemMapper.toItem(itemDto1, owner1, null);
         booking1 = new Booking(1L, localDateTime.minusDays(2), localDateTime.minusDays(1), item, user1, StatusBooking.APPROVED);
         booking2 = new Booking(2L, localDateTime.plusDays(2), localDateTime.plusDays(3), item, user1, StatusBooking.WAITING);
-        comment =new Comment(1L,"Хорошая вещь", item, user1, localDateTime);
+        comment = new Comment(1L, "Хорошая вещь", item, user1, localDateTime);
         commentDto1 = new CommentDto(1L, "Add comment from user1", "user1", localDateTime);
     }
 
@@ -99,7 +99,7 @@ public class ItemServiceImplTest {
         Item item = ItemMapper.toItem(itemDtoReq, owner1, itemRequest);
         when(itemRepository.save(any(Item.class)))
                 .thenReturn(item);
-        ItemDto itemDto = itemService.createItem(owner1.getId(),itemDtoReq);
+        ItemDto itemDto = itemService.createItem(owner1.getId(), itemDtoReq);
         assertNotNull(itemDto);
         assertEquals(item.getId(), itemDto.getId());
         assertEquals(item.getDescription(), itemDto.getDescription());
@@ -112,7 +112,7 @@ public class ItemServiceImplTest {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
         final ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class,
-                () -> itemService.createItem(owner1.getId(),itemDto1));
+                () -> itemService.createItem(owner1.getId(), itemDto1));
         assertEquals("Пользователь не найден", exception.getMessage());
     }
 
@@ -123,7 +123,7 @@ public class ItemServiceImplTest {
         Item item = ItemMapper.toItem(itemDto1, owner1, null);
         when(itemRepository.save(any(Item.class)))
                 .thenReturn(item);
-        ItemDto itemDto = itemService.createItem(owner1.getId(),itemDto1);
+        ItemDto itemDto = itemService.createItem(owner1.getId(), itemDto1);
         assertNotNull(itemDto);
         assertEquals(item.getId(), itemDto.getId());
         assertEquals(item.getDescription(), itemDto.getDescription());
@@ -187,11 +187,12 @@ public class ItemServiceImplTest {
                 .thenReturn(item1);
         ItemDto itemDto = itemService.updateItem(owner1.getId(), itemDtoUpdate, itemDto1.getId());
         assertNotNull(itemDto);
-        assertEquals(item1.getId(),itemDto.getId());
+        assertEquals(item1.getId(), itemDto.getId());
         assertEquals(item1.getName(), itemDto.getName());
         assertEquals(item1.getDescription(), itemDto.getDescription());
         assertEquals(item1.getAvailable(), itemDto.getAvailable());
     }
+
     //МОЖНО СДЕЛАТЬ ДЛЯ ВЕТОК ЕЩЕ
     @Test
     void testFindItemById404ItemId() {
@@ -218,10 +219,10 @@ public class ItemServiceImplTest {
                 .thenReturn(List.of());
         when(commentRepository.findAllByItemId(anyLong()))
                 .thenReturn(List.of());
-        ItemInfoDto itemInfoDto = itemService.findItemById(owner1.getId(),itemDto1.getId());
+        ItemInfoDto itemInfoDto = itemService.findItemById(owner1.getId(), itemDto1.getId());
 
         assertNotNull(itemInfoDto);
-        assertEquals(item.getId(),itemInfoDto.getId());
+        assertEquals(item.getId(), itemInfoDto.getId());
         assertEquals(item.getName(), itemInfoDto.getName());
         assertEquals(item.getDescription(), itemInfoDto.getDescription());
         assertEquals(item.getAvailable(), itemInfoDto.getAvailable());
@@ -236,10 +237,10 @@ public class ItemServiceImplTest {
                 .thenReturn(List.of(booking1, booking2));
         when(commentRepository.findAllByItemId(anyLong()))
                 .thenReturn(List.of(comment));
-        ItemInfoDto itemInfoDto = itemService.findItemById(owner1.getId(),itemDto1.getId());
+        ItemInfoDto itemInfoDto = itemService.findItemById(owner1.getId(), itemDto1.getId());
 
         assertNotNull(itemInfoDto);
-        assertEquals(item.getId(),itemInfoDto.getId());
+        assertEquals(item.getId(), itemInfoDto.getId());
         assertEquals(item.getName(), itemInfoDto.getName());
         assertEquals(item.getDescription(), itemInfoDto.getDescription());
         assertEquals(item.getAvailable(), itemInfoDto.getAvailable());
