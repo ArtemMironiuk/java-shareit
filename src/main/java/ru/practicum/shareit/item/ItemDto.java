@@ -1,14 +1,13 @@
 package ru.practicum.shareit.item;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.practicum.shareit.Create;
 
 import javax.validation.constraints.NotBlank;
 
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
