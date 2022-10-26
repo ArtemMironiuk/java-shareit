@@ -37,7 +37,7 @@ public interface ItemService {
      * @param userId идентификатор пользователя, которому принадлежат вещи
      * @return список вещей пользователя в DTO
      */
-    List<ItemInfoDto> findItemsOfUser(Long userId);
+    List<ItemInfoDto> findItemsOfUser(Long userId, Integer from, Integer size);
 
     /**
      * Поиск вещей по слову или первым буквам
@@ -46,7 +46,7 @@ public interface ItemService {
      * @param text   слово или набор букв по которым нужно найти вещь
      * @return список найденных вещей
      */
-    List<ItemDto> searchItem(Long userId, String text);
+    List<ItemDto> searchItem(Long userId, String text, Integer from, Integer size);
 
     /**
      * Создать комментарий

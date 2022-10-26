@@ -3,12 +3,16 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.handler.exception.ObjectNotFoundException;
 import ru.practicum.shareit.handler.exception.ValidationException;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -26,19 +30,27 @@ import static java.util.stream.Collectors.toList;
 public class ItemServiceImpl implements ItemService {
 
     @Autowired
-    private ItemRepository itemRepository;
+    ItemRepository itemRepository;
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
     @Autowired
-    private CommentRepository commentRepository;
+    CommentRepository commentRepository;
     @Autowired
-    private BookingRepository bookingRepository;
+    BookingRepository bookingRepository;
+    @Autowired
+    ItemRequestRepository itemRequestRepository;
 
     @Transactional
     @Override
     public ItemDto createItem(Long userId, ItemDto itemDto) {
-        User owner = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден"));
-        @Valid Item item = ItemMapper.toItem(itemDto, owner);
+        User owner = userRepository.findById(userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден"));
+        ItemRequest request = null;
+        if (itemDto.getRequestId() != null) {
+            request = itemRequestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new ObjectNotFoundException("Нет запроса с таким id = {}", itemDto.getRequestId()));
+        }
+        @Valid Item item = ItemMapper.toItem(itemDto, owner, request);
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
@@ -49,9 +61,9 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException("нет информации о пользователе, userId = null");
         }
         User owner = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден"));
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ObjectNotFoundException("нет вещи с id = %d", itemId));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ObjectNotFoundException("нет вещи с таким id"));
         if (!owner.getId().equals(item.getOwner().getId())) {
-            throw new ObjectNotFoundException("у пользавателя с id = %d нет вещей", userId);
+            throw new ObjectNotFoundException("у пользавателя с таким id нет вещей");
         }
         if (itemDtoUpdate.getAvailable() != null) {
             item.setAvailable(itemDtoUpdate.getAvailable());
@@ -89,12 +101,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemInfoDto> findItemsOfUser(Long userId) {
+    public List<ItemInfoDto> findItemsOfUser(Long userId, Integer from, Integer size) {
         if (userId == null) {
             throw new ValidationException("нет информации о пользователе, userId = null");
         }
         User user = userRepository.findById(userId).orElseThrow(ObjectNotFoundException::new);
-        List<Item> items = itemRepository.findAllByOwnerIdOrderById(userId);
+        Pageable pageable = PageRequest.of(from / size, size);
+        List<Item> items = itemRepository.findAllByOwnerIdOrderById(userId, pageable);
         List<ItemInfoDto> itemsInfoDto = new ArrayList<>();
         for (Item item : items) {
             List<Booking> bookings = bookingRepository.findByItemIdOrderByStartDesc(item.getId());
@@ -110,12 +123,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItem(Long userId, String text) {
+    public List<ItemDto> searchItem(Long userId, String text, Integer from, Integer size) {
         List<ItemDto> resultSearch = new ArrayList<>();
         if (text.isEmpty()) {
             return resultSearch;
         }
-        List<Item> itemList = itemRepository.search(text);
+        Pageable pageable = PageRequest.of(from / size, size);
+        List<Item> itemList = itemRepository.search(text, pageable);
         for (Item item : itemList) {
             if (item.getAvailable() == true) {
                 resultSearch.add(ItemMapper.toItemDto(item));

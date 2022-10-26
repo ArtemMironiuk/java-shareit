@@ -5,6 +5,7 @@ import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,13 +19,13 @@ public class ItemRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;                //уникальный идентификатор
-    @NonNull
+    @NotNull
     @NotBlank
     @Column(name = "description", nullable = false)
     private String description;     //текст запроса, содержащий описание требуемой вещи
     @ManyToOne
     @JoinColumn(name = "requester_id", nullable = false)
-    private User requestor;         //пользователь, создавший запрос
+    private User requester;         //пользователь, создавший запрос
     @Column(name = "created", nullable = false)
     private LocalDateTime created;  //дата и время создания запроса
 }

@@ -48,15 +48,19 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemInfoDto> findItemsOfUser(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemInfoDto> findItemsOfUser(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                             @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                             @RequestParam(name = "size", defaultValue = "20") Integer size) {
         log.info("Получен запрос к эндпоинту GET, /items");
-        return itemService.findItemsOfUser(userId);
+        return itemService.findItemsOfUser(userId, from, size);
     }
 
     @GetMapping("/search")
     public List<ItemDto> searchItem(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                    @RequestParam String text) {
+                                    @RequestParam String text,
+                                    @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                    @RequestParam(name = "size", defaultValue = "20") Integer size) {
         log.info("Получен запрос к эндпоинту GET, /items/search?text={}", text);
-        return itemService.searchItem(userId, text);
+        return itemService.searchItem(userId, text, from, size);
     }
 }
