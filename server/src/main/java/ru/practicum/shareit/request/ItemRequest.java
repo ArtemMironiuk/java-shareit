@@ -4,8 +4,8 @@ import lombok.*;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+//import javax.validation.constraints.NotBlank;
+//import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -19,8 +19,8 @@ public class ItemRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;                //уникальный идентификатор
-    @NotNull
-    @NotBlank
+//    @NotNull
+//    @NotBlank
     @Column(name = "description", nullable = false)
     private String description;     //текст запроса, содержащий описание требуемой вещи
     @ManyToOne

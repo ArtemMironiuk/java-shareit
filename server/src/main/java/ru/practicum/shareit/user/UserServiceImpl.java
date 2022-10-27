@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.handler.exception.ObjectNotFoundException;
 import ru.practicum.shareit.handler.exception.ValidationException;
 
-import javax.validation.Valid;
+//import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +43,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserDto createUser(UserDto userDto) {
-        @Valid User user = UserMapper.toUser(userDto);
+//        @Valid
+        User user = UserMapper.toUser(userDto);
         if (!user.getEmail().contains("@")) {
             throw new ValidationException("неправильный Email");
         }

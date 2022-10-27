@@ -5,8 +5,8 @@ import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+//import javax.validation.constraints.NotBlank;
+//import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
@@ -20,15 +20,15 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
     private Long id;
-    @NotNull
-    @NotBlank
+//    @NotNull
+//    @NotBlank
     @Column(name = "item_name", nullable = false)
     private String name;
-    @NotNull
-    @NotBlank
+//    @NotNull
+//    @NotBlank
     @Column(name = "description", nullable = false)
     private String description;
-    @NotNull
+//    @NotNull
     @Column(name = "available", nullable = false)
     private Boolean available;
     @ManyToOne(fetch = FetchType.EAGER)
