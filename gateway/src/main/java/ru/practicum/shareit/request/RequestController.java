@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/requests")
@@ -35,15 +34,15 @@ public class RequestController {
 
     @GetMapping("/all")
     public ResponseEntity<Object> findRequestsOfUser(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                     @PositiveOrZero @RequestParam (name = "from", defaultValue = "0") Integer from,
-                                                     @Positive @RequestParam (name = "size", defaultValue = "20") Integer size) {
+                                                     @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                     @Positive @RequestParam(name = "size", defaultValue = "20") Integer size) {
         log.info("Получен запрос к эндпоинту GET, /requests/all?from={}&size={}", from, size);
         return requestClient.findRequestsOfUser(userId, from, size);
     }
 
     @GetMapping("/{requestId}")
     public ResponseEntity<Object> findRequest(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                @PathVariable(name = "requestId") Long requestId) {
+                                              @PathVariable(name = "requestId") Long requestId) {
         log.info("Получен запрос к эндпоинту GET, /requests/{requestId}", requestId);
         return requestClient.findRequest(userId, requestId);
     }

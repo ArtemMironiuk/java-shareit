@@ -6,11 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.Create;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoUpdate;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import java.util.List;
 
 @RestController
 @RequestMapping("/items")
@@ -30,8 +32,8 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<Object> updateItem(@RequestHeader("X-Sharer-User-Id") Long userId,
-                              @RequestBody ItemDtoUpdate itemDtoUpdate,
-                              @PathVariable Long itemId) {
+                                             @RequestBody ItemDtoUpdate itemDtoUpdate,
+                                             @PathVariable Long itemId) {
         log.info("Получен запрос к эндпоинту PATCH, /items/{itemId}");
         return itemClient.updateItem(userId, itemDtoUpdate, itemId);
     }
@@ -53,7 +55,7 @@ public class ItemController {
 
     @GetMapping
     public ResponseEntity<Object> findItemsOfUser(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                  @PositiveOrZero  @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                  @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                                   @Positive @RequestParam(name = "size", defaultValue = "20") Integer size) {
         log.info("Получен запрос к эндпоинту GET, /items");
         return itemClient.findItemsOfUser(userId, from, size);
@@ -61,9 +63,9 @@ public class ItemController {
 
     @GetMapping("/search")
     public ResponseEntity<Object> searchItem(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                    @RequestParam(name = "text") String text,
-                                    @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                    @Positive @RequestParam(name = "size", defaultValue = "20") Integer size) {
+                                             @RequestParam(name = "text") String text,
+                                             @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                             @Positive @RequestParam(name = "size", defaultValue = "20") Integer size) {
         log.info("Получен запрос к эндпоинту GET, /items/search?text={}", text);
         return itemClient.searchItem(userId, text, from, size);
     }

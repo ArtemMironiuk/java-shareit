@@ -1,14 +1,10 @@
 package ru.practicum.shareit.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.handler.exception.ConflictException;
-import ru.practicum.shareit.handler.exception.ObjectNotFoundException;
-import ru.practicum.shareit.handler.exception.ValidationException;
 
 @RestControllerAdvice
 @Slf4j
@@ -35,19 +31,19 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleNotFound(final ConflictException e) {
-        log.info("409 {}", e.getMessage(), e);
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleNotFound(final DataIntegrityViolationException e) {
-        log.info("409 {}", e.getMessage(), e);
-        return new ErrorResponse(e.getMessage());
-    }
+//    @ExceptionHandler
+//    @ResponseStatus(HttpStatus.CONFLICT)
+//    public ErrorResponse handleNotFound(final ConflictException e) {
+//        log.info("409 {}", e.getMessage(), e);
+//        return new ErrorResponse(e.getMessage());
+//    }
+//
+//    @ExceptionHandler
+//    @ResponseStatus(HttpStatus.CONFLICT)
+//    public ErrorResponse handleNotFound(final DataIntegrityViolationException e) {
+//        log.info("409 {}", e.getMessage(), e);
+//        return new ErrorResponse(e.getMessage());
+//    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)

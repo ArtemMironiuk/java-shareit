@@ -16,7 +16,6 @@ import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +49,7 @@ public class ItemServiceImpl implements ItemService {
             request = itemRequestRepository.findById(itemDto.getRequestId())
                     .orElseThrow(() -> new ObjectNotFoundException("Нет запроса с таким id = {}", itemDto.getRequestId()));
         }
-        @Valid Item item = ItemMapper.toItem(itemDto, owner, request);
+        Item item = ItemMapper.toItem(itemDto, owner, request);
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
 

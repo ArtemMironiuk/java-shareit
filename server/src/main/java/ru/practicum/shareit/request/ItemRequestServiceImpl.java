@@ -32,6 +32,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Autowired
     ItemRepository itemRepository;
 
+    @Transactional
     @Override
     public ItemRequestDtoOutput createRequest(Long userId, ItemRequestDtoInput requestDto) {
         User user = userRepository.findById(userId)
